@@ -41,26 +41,19 @@ int main(int argc, char* argv[]){
 	px* img = (px*)calloc(IMG_SIZE_W*IMG_SIZE_H, sizeof(px));
 	px* d_img;
 	cudaMalloc(&d_img, IMG_SIZE_W*IMG_SIZE_H*sizeof(px));
-//	cudaMemcpy(d_img, img, IMG_SIZE_W*IMG_SIZE_H*sizeof(px), cudaMemcpyHostToDevice);	
+	
 	dim3 threadsPerBlock(16, 16);
     	dim3 numBlocks(IMG_SIZE_W / threadsPerBlock.x, IMG_SIZE_H / threadsPerBlock.y);
+    	
 	clock_t beg = clock();
 	compute_fractal<<<numBlocks, threadsPerBlock>>>(d_img, IMG_SIZE_W, IMG_SIZE_H, IMG_ZOOM, 10000);
 
 	cudaDeviceSynchronize();
+	
 	clock_t end = clock();
 	cudaMemcpy(img, d_img, IMG_SIZE_W*IMG_SIZE_H*sizeof(px), cudaMemcpyDeviceToHost);
 
 	cudaFree(d_img);
-
-	int i = 0;
-	for (int i = 0 ; i < IMG_SIZE_W*IMG_SIZE_H-1;i ++){
-		if (i % IMG_SIZE_W == 0) printf("\n");
-		if (img[i] == 0) printf(". ");
-		else printf("# ");
-//		printf("%d\n", (int)img[i]);
-	}
-	printf("\n");
 
 	printf("Total computation time = %f\n", ((float)(end-beg))/CLOCKS_PER_SEC);
 	free(img);
