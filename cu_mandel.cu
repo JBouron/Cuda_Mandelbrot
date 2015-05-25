@@ -53,15 +53,6 @@ int main(int argc, char* argv[]){
 
 	cudaFree(d_img);
 
-	int i = 0;
-	for (int i = 0 ; i < IMG_SIZE_W*IMG_SIZE_H-1;i ++){
-		if (i % IMG_SIZE_W == 0) printf("\n");
-		if (img[i] == 0) printf(". ");
-		else printf("# ");
-//		printf("%d\n", (int)img[i]);
-	}
-	printf("\n");
-
 	printf("Total computation time = %f\n", ((float)(end-beg))/CLOCKS_PER_SEC);
 	free(img);
 	return 0;
