@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 
+/* some defines : */
 #define IMG_SIZE_W 16384
 #define IMG_SIZE_H 16384
 #define IMG_ZOOM 10000.0
