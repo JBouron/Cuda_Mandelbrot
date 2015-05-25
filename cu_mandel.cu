@@ -42,13 +42,15 @@ int main(int argc, char* argv[]){
 	px* img = (px*)calloc(IMG_SIZE_W*IMG_SIZE_H, sizeof(px));
 	px* d_img;
 	cudaMalloc(&d_img, IMG_SIZE_W*IMG_SIZE_H*sizeof(px));
-//	cudaMemcpy(d_img, img, IMG_SIZE_W*IMG_SIZE_H*sizeof(px), cudaMemcpyHostToDevice);	
+	
 	dim3 threadsPerBlock(16, 16);
     	dim3 numBlocks(IMG_SIZE_W / threadsPerBlock.x, IMG_SIZE_H / threadsPerBlock.y);
+    	
 	clock_t beg = clock();
 	compute_fractal<<<numBlocks, threadsPerBlock>>>(d_img, IMG_SIZE_W, IMG_SIZE_H, IMG_ZOOM, 10000);
 
 	cudaDeviceSynchronize();
+	
 	clock_t end = clock();
 	cudaMemcpy(img, d_img, IMG_SIZE_W*IMG_SIZE_H*sizeof(px), cudaMemcpyDeviceToHost);
 
