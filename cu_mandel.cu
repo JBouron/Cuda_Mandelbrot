@@ -1,5 +1,5 @@
 /*
-	JBouron
+	JBouron.
 */
 
 #include <stdio.h>
