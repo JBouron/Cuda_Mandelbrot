@@ -6,12 +6,12 @@
 #include <math.h>
 
 /* some defines : */
-#define IMG_SIZE_W 16384
-#define IMG_SIZE_H 16384
-#define IMG_ZOOM 10000.0
+#define IMG_SIZE_W 64
+#define IMG_SIZE_H 64
+#define IMG_ZOOM 10.0
 #define PRECISION float
 
-#define SHIFT_X −0.1528
+#define SHIFT_X 15.1528
 #define SHIFT_Y 1.0397
 
 typedef unsigned char px;
@@ -25,8 +25,8 @@ __global__ void compute_fractal(px* img, int img_w, int img_h, PRECISION zoom, i
 	if (img_idx > img_w * img_h - 1){
 		return;
 	}else{
-		PRECISION c_r = (x + 0.1528 - img_w/2)/zoom;
-		PRECISION c_i = (y - 1.0397 - img_h/2)/zoom;
+		PRECISION c_r = (x - (SHIFT_X) - img_w/2)/zoom;
+		PRECISION c_i = (y - (SHIFT_Y) - img_h/2)/zoom;
 		PRECISION z_r = 0;	
 		PRECISION z_i = 0;
 		PRECISION i = 0;
@@ -51,7 +51,13 @@ int main(int argc, char* argv[]){
     	dim3 numBlocks(IMG_SIZE_W / threadsPerBlock.x, IMG_SIZE_H / threadsPerBlock.y);
     	
 	clock_t beg = clock();
-	compute_fractal<<<numBlocks, threadsPerBlock>>>(d_img, IMG_SIZE_W, IMG_SIZE_H, IMG_ZOOM, 10000);
+	PRECISION zoom = 0;
+	if (argc > 1){
+		zoom = atof(argv[1]);
+	}else{
+		zoom = IMG_ZOOM;
+	}
+	compute_fractal<<<numBlocks, threadsPerBlock>>>(d_img, IMG_SIZE_W, IMG_SIZE_H, zoom, 10000);
 
 	cudaDeviceSynchronize();
 	
@@ -61,6 +67,15 @@ int main(int argc, char* argv[]){
 	cudaFree(d_img);
 
 	printf("Total computation time = %f\n", ((float)(end-beg))/CLOCKS_PER_SEC);
+
+	int i = 0;
+	for (i = 0 ; i < IMG_SIZE_W*IMG_SIZE_H; i ++){
+		if (i % IMG_SIZE_W == 0 && i != 0) printf("\n");
+		
+		if (img[i] == 0) printf(". ");
+		else printf("# ");
+	}
 	free(img);
+	printf("\n");
 	return 0;
 }
