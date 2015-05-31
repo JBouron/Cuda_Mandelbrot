@@ -34,7 +34,7 @@ __global__ void compute_fractal(int* pixels, PRECISION shift_x, PRECISION shift_
 
                 int i = 0;
                 do{
-                        //PRECISION tmp = z_r;
+                        PRECISION tmp = z_r;
                         z_r = z_r*z_r - z_i*z_i + c_r;
                         z_i = 2*z_i*tmp + c_i;
                         i ++;
