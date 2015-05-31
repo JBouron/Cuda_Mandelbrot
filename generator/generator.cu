@@ -14,7 +14,7 @@ __device__ int colorize(int i, int max_ite){
 	return lvl << 24 | lvl << 16 | lvl << 8 | lvl;
 }
 
-__global__ void compute_fractal(int* pixels, PRECISION shift_x, PRECISION shift_y, int img_w, int img_h, PRECISION zoom, int max_ite){
+__global__ void compute_fractal(int* pixels, mpf_t shift_x, mpf_t shift_y, int img_w, int img_h, mpf_t zoom, int max_ite){
 	/* Position x and y of the point to be tested in the image. */
 	int x = blockIdx.x * blockDim.x + threadIdx.x;
         int y = blockIdx.y * blockDim.y + threadIdx.y;
@@ -27,10 +27,23 @@ __global__ void compute_fractal(int* pixels, PRECISION shift_x, PRECISION shift_
                 return;
         }else{
 		/* Simple algorithm which test if the given point is in the Mandelbrot Set or not. */	
-                PRECISION c_r = shift_x + (x - img_w/2)/zoom;
-                PRECISION c_i = shift_y + (y - img_h/2)/zoom;
-                PRECISION z_r = 0;
-                PRECISION z_i = 0;
+		mpf_t c_r, c_i, z_r, z_i;
+
+		mpf_init2(c_r, BITS_PRECISION);
+		mpf_init2(c_i, BITS_PRECISION);
+		mpf_init2(z_r, BITS_PRECISION);
+		mpf_init2(z_i, BITS_PRECISION);
+
+                //PRECISION c_r = shift_x + (x - img_w/2)/zoom;
+        	mpf_set_si(c_r, x - img_w/2);
+		mpf_div(c_r, c_r, zoom);
+		mpf_add(c_r, c_r, shift_x);
+		        
+	
+
+		//PRECISION c_i = shift_y + (y - img_h/2)/zoom;
+                //PRECISION z_r = 0;
+                //PRECISION z_i = 0;
 
                 int i = 0;
                 do{
