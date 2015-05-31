@@ -1,14 +1,11 @@
 /*
 	Created by Justinien Bouron.
-	
 	This file is responsible to create a fractal with the given properties.
 
 */
 
 #ifndef GENERATOR_H_INCLUDED
 #define GENERATOR_H_INCLUDED
-
-#include <SFML/Graphics.hpp>
 
 typedef double PRECISION; /* Precision of the calculation, the macro allows to change it easily. */
 
