@@ -7,7 +7,9 @@
 #ifndef GENERATOR_H_INCLUDED
 #define GENERATOR_H_INCLUDED
 
-typedef double PRECISION; /* Precision of the calculation, the macro allows to change it easily. */
+#include <gmp.h>
+
+typedef mpf_t PRECISION; /* Precision of the calculation, the macro allows to change it easily. */
 
 /* Note : for this application, all images will be 32 bits per pixel images. */
 

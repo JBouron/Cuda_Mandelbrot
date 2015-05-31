@@ -5,6 +5,8 @@
 
 #include "generator.h"
 
+#define  BITS_PRECISION 512
+
 using namespace std;
 
 __device__ int colorize(int i, int max_ite){
@@ -29,9 +31,10 @@ __global__ void compute_fractal(int* pixels, PRECISION shift_x, PRECISION shift_
                 PRECISION c_i = shift_y + (y - img_h/2)/zoom;
                 PRECISION z_r = 0;
                 PRECISION z_i = 0;
+
                 int i = 0;
                 do{
-                        PRECISION tmp = z_r;
+                        //PRECISION tmp = z_r;
                         z_r = z_r*z_r - z_i*z_i + c_r;
                         z_i = 2*z_i*tmp + c_i;
                         i ++;
