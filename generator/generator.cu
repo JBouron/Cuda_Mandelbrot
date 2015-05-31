@@ -7,9 +7,6 @@
 using namespace std;
 
 __device__ int colorize(int i, int max_ite){
-	int white = 255 << 16 | 255 << 8 | 255;
-	//if (i == max_ite) return white;
-	//else return 0;
 	int lvl = ((float)i/max_ite)*255;
 	return lvl << 24 | lvl << 16 | lvl << 8 | lvl;
 }
@@ -53,7 +50,7 @@ int* generate(int* pixels, int img_w, int img_h, int max_ite, PRECISION shift_x,
 		/* Allocating memory for the pixels, but this time on the device. */
 		int* device_pixels;
 		if (cudaMalloc((void**) &device_pixels, alloc_size) == cudaErrorMemoryAllocation){
-			fprintf(stderr, "An error has occured while allocating on device memory.\n");
+			stderr << "An error has occured while allocating on device memory." << endl;
 			return NULL;
 		}
 
@@ -71,13 +68,6 @@ int* generate(int* pixels, int img_w, int img_h, int max_ite, PRECISION shift_x,
 		cudaMemcpy(pixels, device_pixels, alloc_size, cudaMemcpyDeviceToHost);
 		cudaFree(device_pixels);
 
-		/*int i = 0;
-        	for (i = 0 ; i < img_w*img_h; i ++){
-                	if (i % img_w == 0 && i != 0) printf("\n");
-               	 	if (pixels[i] == 0) printf(". ");
-                	else printf("# ");
-       		}
-		printf("\n");*/
 		return pixels;
 	}
 	else return NULL;
@@ -93,12 +83,10 @@ int* generate(int* pixels, int img_w, int img_h, int max_ite, PRECISION shift_x,
 #define UNITTEST_SHIFTY 0.13182590420533
 #define UNITTEST_ZOOM 100000.0
 
-//Uint32 white = 255 << 24 | 255 << 16 | 255 << 8 | 255;
-
 int main(void){
 	int* pixels = (int*)calloc(UNITTEST_IMGW*UNITTEST_IMGH, sizeof(int));
 	if (pixels == NULL){
-		printf("Alloc error. Test failed.");
+		cout << "Alloc error. Test failed." << endl;
 		return -1;
 	}
 
@@ -111,7 +99,7 @@ int main(void){
 	
 	while (z > 0){
 		if (generate(pixels, UNITTEST_IMGW, UNITTEST_IMGH, UNITTEST_MAXITE, UNITTEST_SHIFTX, UNITTEST_SHIFTY, z) == NULL){
-			printf("Generate failed\n.");
+			 cout << "Generate failed." << endl;
 			return -1;
 		}		
 	
@@ -119,7 +107,7 @@ int main(void){
 		sprintf(name, "MSZ=%f.jpg", z);
 		img.saveToFile(name);
 		z *= 2 ;
-		printf("Zoom = %f\n", z);			
+		cout << "Zoom = " << z << endl;
 	}
 	
 	return 0;
