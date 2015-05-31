@@ -4,11 +4,14 @@
 #include <stdio.h>
 #include "generator.h"
 
+using namespace std;
+
 __device__ int colorize(int i, int max_ite){
-	int white = 255 << 24/* | 255 << 16 | 255 << 8 | 255*/;
+	int white = 255 << 16 | 255 << 8 | 255;
 	//if (i == max_ite) return white;
 	//else return 0;
-	return ((float)i/max_ite)*white;
+	int lvl = ((float)i/max_ite)*255;
+	return lvl << 24 | lvl << 16 | lvl << 8 | lvl;
 }
 
 __global__ void compute_fractal(int* pixels, PRECISION shift_x, PRECISION shift_y, int img_w, int img_h, PRECISION zoom, int max_ite){
@@ -85,10 +88,10 @@ int* generate(int* pixels, int img_w, int img_h, int max_ite, PRECISION shift_x,
 
 #define UNITTEST_IMGW 640
 #define UNITTEST_IMGH 640
-#define UNITTEST_MAXITE 100
-#define UNITTEST_SHIFTX 0.001643721971153
-#define UNITTEST_SHIFTY 0.822467633298876
-#define UNITTEST_ZOOM 6000000000000.0
+#define UNITTEST_MAXITE 10000
+#define UNITTEST_SHIFTX -0.743643887037151
+#define UNITTEST_SHIFTY 0.13182590420533
+#define UNITTEST_ZOOM 100000.0
 
 //Uint32 white = 255 << 24 | 255 << 16 | 255 << 8 | 255;
 
@@ -99,30 +102,24 @@ int main(void){
 		return -1;
 	}
 
-	sf::RenderWindow window(sf::VideoMode(UNITTEST_IMGW, UNITTEST_IMGH), "SFML window");	
-
 	PRECISION z = 1.0;
 
 	sf::Image img;
-	sf::Texture tex; 
-	sf::Sprite sp;
+
+	#define MAX_FILENAME 8192
+	char name[MAX_FILENAME];
 	
-	while (z < UNITTEST_ZOOM){
+	while (z > 0){
 		if (generate(pixels, UNITTEST_IMGW, UNITTEST_IMGH, UNITTEST_MAXITE, UNITTEST_SHIFTX, UNITTEST_SHIFTY, z) == NULL){
 			printf("Generate failed\n.");
 			return -1;
 		}		
 	
 		img.create(UNITTEST_IMGW, UNITTEST_IMGH, (sf::Uint8*)pixels);
-		tex.loadFromImage(img);
-		sp.setTexture(tex);
-	
-		window.clear();	
-		window.draw(sp);
-		window.display();
+		sprintf(name, "MSZ=%f.jpg", z);
+		img.saveToFile(name);
 		z *= 2 ;
-		printf("Zoom = %f\n", z);
-		sf::sleep(sf::milliseconds(500));				
+		printf("Zoom = %f\n", z);			
 	}
 	
 	return 0;

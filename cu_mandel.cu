@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <math.h>
 
+#include <SDL/SDL.h>
+
 /* some defines : */
 #define IMG_SIZE_W 64
 #define IMG_SIZE_H 64

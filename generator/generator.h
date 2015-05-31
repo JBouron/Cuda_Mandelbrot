@@ -10,7 +10,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#define PRECISION double /* Precision of the calculation, the macro allows to change it easily. */
+typedef double PRECISION; /* Precision of the calculation, the macro allows to change it easily. */
 
 /* Note : for this application, all images will be 32 bits per pixel images. */
 
